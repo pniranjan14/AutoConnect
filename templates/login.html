@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoConnect - Login & Registration</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', sans-serif; }
+
+    /* Dark Gradient Background with SVG Car Pattern */
+    .hero-bg {
+      background: linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(26,26,26,0.95) 100%), 
+                  url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="cars" x="0" y="0" width="200" height="100" patternUnits="userSpaceOnUse"><g fill="none" stroke="%23333" stroke-width="1" opacity="0.3"><path d="M20 60 L40 60 L45 50 L55 50 L60 40 L80 40 L85 50 L95 50 L100 60 L120 60 L125 70 L15 70 Z"/><circle cx="35" cy="70" r="8"/><circle cx="105" cy="70" r="8"/></g></pattern></defs><rect width="100%25" height="100%25" fill="url(%23cars)"/></svg>');
+      background-size: cover, 400px 200px;
+      background-position: center, center;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    }
+
+    .tab-button.active {
+      background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+      color: white;
+    }
+
+    .type-btn.active {
+      background: #1a1a1a;
+      color: white;
+      border-color: #1a1a1a;
+    }
+  </style>
+</head>
+<body class="hero-bg min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="bg-black shadow-lg sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-xl">🚗</span>
+                        </div>
+                        <span class="text-2xl font-bold text-white">AutoConnect</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="{% url 'home' %}" class="text-white hover:text-gray-300 px-3 py-2 font-medium">Home</a>
+                        <a href="#services" class="text-gray-300 hover:text-white px-3 py-2 font-medium">Services</a>
+                        <a href="#how-it-works" class="text-gray-300 hover:text-white px-3 py-2 font-medium">How It Works</a>
+                        <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 font-medium">Contact</a>
+                        <button class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                            <a href="{% url 'login_register' %}">Sign In</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+  <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl w-full space-y-8">
+      <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+
+        <!-- Tabs -->
+        <div class="bg-gray-100 p-1 flex rounded-t-2xl">
+          <button id="loginTab" class="tab-button flex-1 py-3 px-6 text-center font-semibold rounded-xl active">
+            Login
+          </button>
+          <button id="registerTab" class="tab-button flex-1 py-3 px-6 text-center font-semibold rounded-xl text-gray-600">
+            Register
+          </button>
+        </div>
+
+        <!-- LOGIN SECTION -->
+        <div id="loginSection" class="p-8">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Welcome Back</h2>
+            <p class="text-gray-600 mt-2">Sign in to your account</p>
+          </div>
+
+          <!-- Messages Display -->
+          {% if messages %}
+            <div class="mb-6">
+              {% for message in messages %}
+                {% if message.tags == 'error' or message.tags == 'warning' %}
+                  <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif message.tags == 'warning' %}bg-yellow-100 border border-yellow-400 text-yellow-700{% endif %}">
+                    {{ message }}
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <form id="loginForm" method="POST" action="{% url 'login_register' %}">
+            {% csrf_token %}
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-medium mb-2">Username/Email</label>
+              <input type="text" name="username" required
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent">
+            </div>
+
+            <div class="mb-4">
+              <label class="block text-gray-700 text-sm font-medium mb-2">Password</label>
+              <input type="password" name="password" required
+                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent">
+            </div>
+
+            <div class="flex items-center justify-between mb-4">
+              <label class="flex items-center">
+                <input type="checkbox" class="rounded border-gray-300 text-gray-600 focus:ring-gray-500">
+                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+              </label>
+              <a href="#" class="text-sm text-gray-600 hover:text-gray-800">Forgot password?</a>
+            </div>
+
+            <button type="submit" class="w-full gradient-bg text-white py-3 px-6 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+              Sign In
+            </button>
+          </form>
+        </div>
+
+        <!-- REGISTER SECTION -->
+        <div id="registerSection" class="p-8 hidden">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-bold text-gray-800">Create Account</h2>
+            <p class="text-gray-600 mt-2">Join AutoConnect today</p>
+          </div>
+
+          <!-- Messages Display -->
+          {% if messages %}
+            <div class="mb-6">
+              {% for message in messages %}
+                <div class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-100 border border-red-400 text-red-700{% elif message.tags == 'success' %}bg-green-100 border border-green-400 text-green-700{% elif message.tags == 'warning' %}bg-yellow-100 border border-yellow-400 text-yellow-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          <!-- Responsive Button Switch -->
+          <div class="flex mb-6 gap-4">
+            <button id="userBtn" class="type-btn flex-1 py-3 px-6 border-2 border-gray-300 rounded-lg font-semibold text-gray-700 active">
+              👤 Register as User
+            </button>
+            <button id="providerBtn" class="type-btn flex-1 py-3 px-6 border-2 border-gray-300 rounded-lg font-semibold text-gray-700">
+              🏢 Register as Provider
+            </button>
+          </div>
+
+          <form id="userRegisterForm" class="space-y-6" method="POST" action="{% url 'register_user' %}">
+            {% csrf_token %}
+            <input type="text" name="full_name"  placeholder="Full Name" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="text" name="username"  placeholder="Username" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="tel" name="phone"  placeholder="Mobile Number" required pattern="[0-9]{10}" class="w-full px-4 py-3 border rounded-lg">
+            <textarea name="address"  placeholder="Address" required class="w-full px-4 py-3 border rounded-lg"></textarea>
+            <input type="email" name="email"  placeholder="Email" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="password" name="password"  placeholder="Password" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="password" name="confirm_password"  placeholder="Confirm Password" required class="w-full px-4 py-3 border rounded-lg">
+            <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+              Create User Account
+            </button>
+          </form>
+
+        
+          <form id="providerRegisterForm" class="space-y-6 hidden" method="POST" action="{% url 'register_provider' %}">
+            {% csrf_token %}
+            <input type="text" name="owner_name" placeholder="Owner Name" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="email" name="email" placeholder="Email" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="text" name="username"  placeholder="Username" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="password" name="password" placeholder="Password" required class="w-full px-4 py-3 border rounded-lg">
+            <input type="password" name="confirm_password"  placeholder="Confirm Password" required class="w-full px-4 py-3 border rounded-lg">
+            <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+              Create Provider Account
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.getElementById('loginTab').addEventListener('click', () => {
+      document.getElementById('loginSection').classList.remove('hidden');
+      document.getElementById('registerSection').classList.add('hidden');
+      setActiveTab('loginTab');
+    });
+
+    document.getElementById('registerTab').addEventListener('click', () => {
+      document.getElementById('loginSection').classList.add('hidden');
+      document.getElementById('registerSection').classList.remove('hidden');
+      setActiveTab('registerTab');
+    });
+
+    function setActiveTab(tabId) {
+      document.querySelectorAll('.tab-button').forEach(tab => tab.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+    }
+
+    // User / Provider switch
+    const userBtn = document.getElementById('userBtn');
+    const providerBtn = document.getElementById('providerBtn');
+    const userForm = document.getElementById('userRegisterForm');
+    const providerForm = document.getElementById('providerRegisterForm');
+
+    userBtn.addEventListener('click', () => {
+      userBtn.classList.add('active');
+      providerBtn.classList.remove('active');
+      userForm.classList.remove('hidden');
+      providerForm.classList.add('hidden');
+    });
+
+    providerBtn.addEventListener('click', () => {
+      providerBtn.classList.add('active');
+      userBtn.classList.remove('active');
+      providerForm.classList.remove('hidden');
+      userForm.classList.add('hidden');
+    });
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoConnect - Smart Vehicle Service Center Locator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8) 0%, rgba(26,26,26,0.9) 100%), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="cars" x="0" y="0" width="200" height="100" patternUnits="userSpaceOnUse"><g fill="none" stroke="%23333" stroke-width="1" opacity="0.3"><path d="M20 60 L40 60 L45 50 L55 50 L60 40 L80 40 L85 50 L95 50 L100 60 L120 60 L125 70 L15 70 Z"/><circle cx="35" cy="70" r="8"/><circle cx="105" cy="70" r="8"/></g></pattern></defs><rect width="100%25" height="100%25" fill="url(%23cars)"/></svg>');
+            background-size: cover, 400px 200px;
+            background-position: center, center;
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .search-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .feature-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav class="bg-black shadow-lg sticky top-0 z-50 border-b border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-xl">🚗</span>
+                        </div>
+                        <span class="text-2xl font-bold text-white">AutoConnect</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#" class="text-white hover:text-gray-300 px-3 py-2 font-medium">Home</a>
+                        <a href="#services" class="text-gray-300 hover:text-white px-3 py-2 font-medium">Services</a>
+                        <a href="#how-it-works" class="text-gray-300 hover:text-white px-3 py-2 font-medium">How It Works</a>
+                        <a href="#contact" class="text-gray-300 hover:text-white px-3 py-2 font-medium">Contact</a>
+                        <button class="gradient-bg text-white px-6 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
+                            <a href="{% url 'login_register' %}">Sign In</a>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                    Find Your Perfect<br>
+                    <span class="text-gray-300">Vehicle Service Center</span>
+                </h1>
+                <p class="text-xl md:text-2xl mb-12 text-gray-300 max-w-3xl mx-auto">
+                    Discover, compare, and connect with trusted vehicle service providers near you. 
+                    From painting to repairs, find the best services at competitive prices.
+                </p>
+                
+                <!-- Search Bar -->
+                <div class="max-w-4xl mx-auto bg-white rounded-2xl p-6 shadow-2xl">
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <div class="flex-1">
+                            <label class="block text-gray-700 text-sm font-medium mb-2 text-left">Location</label>
+                            <input type="text" placeholder="Enter your city or ZIP code" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-800">
+                        </div>
+                        <div class="flex-1">
+                            <label class="block text-gray-700 text-sm font-medium mb-2 text-left">Service Type</label>
+                            <select class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-gray-800">
+                                <option>All Services</option>
+                                <option>Auto Painting</option>
+                                <option>Wheel Alignment</option>
+                                <option>Engine Repair</option>
+                                <option>Oil Change</option>
+                                <option>Brake Service</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors search-animation">
+                                🔍 Search Centers
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-gray-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-white mb-4">Why Choose AutoConnect?</h2>
+                <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                    We make finding and comparing vehicle services simple, fast, and reliable
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-8 rounded-xl bg-gray-800 hover:bg-gray-700 hover:shadow-lg transition-all">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl">📍</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-4">Smart Location Search</h3>
+                    <p class="text-gray-300">
+                        Find the nearest service centers using advanced GPS technology and real-time availability
+                    </p>
+                </div>
+                
+                <div class="text-center p-8 rounded-xl bg-gray-800 hover:bg-gray-700 hover:shadow-lg transition-all">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl">⚖️</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-4">Compare Services</h3>
+                    <p class="text-gray-300">
+                        Compare prices, ratings, and service packages side-by-side to make informed decisions
+                    </p>
+                </div>
+                
+                <div class="text-center p-8 rounded-xl bg-gray-800 hover:bg-gray-700 hover:shadow-lg transition-all">
+                    <div class="feature-icon w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-2xl">⭐</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-white mb-4">Verified Reviews</h3>
+                    <p class="text-gray-300">
+                        Read authentic customer reviews and ratings to choose the best service provider
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-white mb-4">Popular Services</h2>
+                <p class="text-xl text-gray-300">
+                    Discover the most requested vehicle services in your area
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="service-card bg-gray-800 rounded-xl p-6 shadow-md border border-gray-700">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <h3 class="text-xl font-semibold text-white mb-3">Auto Painting</h3>
+                    <p class="text-gray-300 mb-4">Professional paint jobs, touch-ups, and custom designs</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-300 font-semibold">From ₹5000</span>
+                        <button class="text-gray-300 hover:text-white font-medium">View Details →</button>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-white rounded-xl p-6 shadow-md">
+                    <div class="text-4xl mb-4">⚙️</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Wheel Alignment</h3>
+                    <p class="text-gray-600 mb-4">Precision alignment for better handling and tire life</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-600 font-semibold">From ₹2500</span>
+                        <button class="text-purple-600 hover:text-purple-800 font-medium">View Details →</button>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-white rounded-xl p-6 shadow-md">
+                    <div class="text-4xl mb-4">🔧</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Engine Repair</h3>
+                    <p class="text-gray-600 mb-4">Expert diagnostics and comprehensive engine services</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-600 font-semibold">From ₹3500</span>
+                        <button class="text-purple-600 hover:text-purple-800 font-medium">View Details →</button>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-white rounded-xl p-6 shadow-md">
+                    <div class="text-4xl mb-4">🛞</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Brake Service</h3>
+                    <p class="text-gray-600 mb-4">Complete brake inspection, repair, and replacement</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-600 font-semibold">From ₹2000</span>
+                        <button class="text-purple-600 hover:text-purple-800 font-medium">View Details →</button>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-white rounded-xl p-6 shadow-md">
+                    <div class="text-4xl mb-4">🛢️</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Oil Change</h3>
+                    <p class="text-gray-600 mb-4">Quick and professional oil change services</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-600 font-semibold">From ₹1000</span>
+                        <button class="text-purple-600 hover:text-purple-800 font-medium">View Details →</button>
+                    </div>
+                </div>
+                
+                <div class="service-card bg-white rounded-xl p-6 shadow-md">
+                    <div class="text-4xl mb-4">🔍</div>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3">Diagnostics</h3>
+                    <p class="text-gray-600 mb-4">Advanced computer diagnostics and troubleshooting</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-purple-600 font-semibold">From ₹1500</span>
+                        <button class="text-purple-600 hover:text-purple-800 font-medium">View Details →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">How It Works</h2>
+                <p class="text-xl text-gray-600">
+                    Get connected with the right service center in just 3 simple steps
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">1</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Search & Discover</h3>
+                    <p class="text-gray-600">
+                        Enter your location and service needs to find nearby centers with real-time availability
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">2</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Compare & Choose</h3>
+                    <p class="text-gray-600">
+                        Review service packages, prices, ratings, and customer reviews to make the best choice
+                    </p>
+                </div>
+                
+                <div class="text-center">
+                    <div class="gradient-bg w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span class="text-white text-2xl font-bold">3</span>
+                    </div>
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4">Book & Connect</h3>
+                    <p class="text-gray-600">
+                        Schedule your appointment directly through our platform and get your vehicle serviced
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="hero-bg text-white py-20">
+        <div class="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
+            <h2 class="text-4xl font-bold mb-6">Ready to Find Your Service Center?</h2>
+            <p class="text-xl mb-8 text-purple-100">
+                Join thousands of satisfied customers who trust AutoConnect for their vehicle service needs
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="{% url 'login_register' %}"><button class="bg-white text-purple-600 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    🔍 Start Searching Now
+                </button></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 gradient-bg rounded-lg flex items-center justify-center mr-3">
+                            <span class="text-white font-bold text-xl">🚗</span>
+                        </div>
+                        <span class="text-2xl font-bold">AutoConnect</span>
+                    </div>
+                    <p class="text-gray-400">
+                        Your trusted partner for finding the best vehicle service centers near you.
+                    </p>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Services</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">Auto Painting</a></li>
+                        <li><a href="#" class="hover:text-white">Wheel Alignment</a></li>
+                        <li><a href="#" class="hover:text-white">Engine Repair</a></li>
+                        <li><a href="#" class="hover:text-white">Brake Service</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Company</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                        <li><a href="#" class="hover:text-white">Careers</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Connect</h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">📧 support@autoconnect.com</a></li>
+                        <li><a href="#" class="hover:text-white">📞 +919526658525</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AutoConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Search functionality
+        document.querySelector('.search-animation').addEventListener('click', function() {
+            const location = document.querySelector('input[type="text"]').value;
+            const service = document.querySelector('select').value;
+            
+            if (location.trim() === '') {
+                alert('Please enter a location to search for service centers.');
+                return;
+            }
+            
+            // Simulate search results
+            alert(`Searching for ${service} services in ${location}...\n\nFound 12 service centers nearby!\n\nThis would normally redirect to the results page.`);
+        });
+
+        // Service card interactions
+        document.querySelectorAll('.service-card button').forEach(button => {
+            button.addEventListener('click', function() {
+                const serviceName = this.closest('.service-card').querySelector('h3').textContent;
+                alert(`Viewing details for ${serviceName}...\n\nThis would show:\n• Service description\n• Available packages\n• Nearby providers\n• Customer reviews\n• Booking options`);
+            });
+        });
+
+        // CTA button interactions
+        document.querySelector('button:contains("Start Searching Now")') || 
+        document.querySelectorAll('button')[document.querySelectorAll('button').length - 2].addEventListener('click', function() {
+            document.querySelector('input[type="text"]').focus();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'971aa90eb43ef242',t:'MTc1NTYxNzA5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

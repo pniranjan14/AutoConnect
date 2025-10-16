@@ -1,0 +1,38 @@
+from django.urls import path
+import home.views
+
+urlpatterns = [
+    path('', home.views.index, name="home"),
+    path('home', home.views.index, name="home"),
+    path('login', home.views.login_view, name="login_register"),
+    path('register_provider', home.views.register_provider, name="register_provider"),
+    path('register_user', home.views.register_user, name="register_user"),
+    path("dashboard", home.views.user_dashboard, name="user_dashboard"),
+    path("provider_dashboard", home.views.provider_dashboard, name="provider_dashboard"),
+    path("services_provided", home.views.services_provided, name="services_provided"),
+    path("emergency_assist", home.views.emergency_assist, name="emergency_assist"),
+    path("admin_dashboard", home.views.admin_dashboard, name="admin_dashboard"),
+    path("logout_view", home.views.logout_view, name="logout_view"),
+    path("find_workshop", home.views.find_workshop, name="find_workshop"),
+    path("request_assistance", home.views.request_assistance, name="request_assistance"),
+    path("service_history", home.views.service_history, name="service_history"),
+    path("new_requests", home.views.new_requests, name="new_requests"),
+    path("approve_booking/<int:booking_id>/", home.views.approve_booking, name="approve_booking"),
+    path("reject_booking/<int:booking_id>/", home.views.reject_booking, name="reject_booking"),
+    path("accept_emergency/<int:emergency_id>/", home.views.accept_emergency, name="accept_emergency"),
+    path("reject_emergency/<int:emergency_id>/", home.views.reject_emergency, name="reject_emergency"),
+    path("api/services/<int:center_id>/", home.views.api_services, name="api_services"),
+    path("service_reports", home.views.service_reports, name="service_reports"),
+    path("provider_emergency", home.views.provider_emergency, name="provider_emergency"),
+
+    path("user_reviews", home.views.user_reviews, name="user_reviews"),
+    path("user_profile", home.views.user_profile, name="user_profile"),
+    path("provider_profile/", home.views.provider_profile, name="provider_profile"),
+    path("pending_centers", home.views.pending_centers, name="pending_centers"),
+    path("approve_service_center/<int:center_id>", home.views.approve_service_center, name="approve_service_center"),
+    path("reject_service_center/<int:center_id>", home.views.reject_service_center, name="reject_service_center"),
+    path('manage_users', home.views.manage_users, name='manage_users'),
+    path('block_user/<int:user_id>/', home.views.block_user, name='block_user'),
+    path('unblock_user/<int:user_id>/', home.views.unblock_user, name='unblock_user'),
+    path('delete_user/<int:user_id>/', home.views.delete_user, name='delete_user'),
+]

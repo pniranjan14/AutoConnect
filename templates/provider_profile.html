@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Provider Profile - AutoConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle user menu dropdown
+            document.getElementById('user-menu-button').addEventListener('click', function() {
+                const menu = document.getElementById('user-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const button = document.getElementById('user-menu-button');
+                const menu = document.getElementById('user-menu');
+                if (!button.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        }
+
+        .service-card {
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .notification-badge {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-8px); }
+            70% { transform: translateY(-4px); }
+        }
+
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .approved {
+            background-color: #34d399;
+            color: #064e3b;
+        }
+
+        .suspended {
+            background-color: #f87171;
+            color: #7f1d1d;
+        }
+
+        .pending {
+            background-color: #fbbf24;
+            color: #92400e;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 15px;
+            margin-right: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: opacity 0.3s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body class="bg-white min-h-full">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-500 p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">AutoConnect</h1>
+                        <p class="text-gray-300 text-sm">Provider Dashboard</p>
+                    </div>
+                </div>
+
+                <!-- Navigation and User Menu -->
+                <div class="flex items-center space-x-6">
+                    <nav class="hidden md:flex space-x-6">
+                        <a href="{% url 'provider_dashboard' %}" class="text-white hover:text-blue-300 transition-colors">Dashboard</a>
+                        <a href="{% url 'new_requests' %}" class="text-gray-300 hover:text-white transition-colors">Bookings</a>
+                        <a href="{% url 'provider_emergency' %}" class="text-gray-300 hover:text-white transition-colors">Emergency</a>
+                        <a href="{% url 'services_provided' %}" class="text-gray-300 hover:text-white transition-colors">Services</a>
+                        <a href="{% url 'service_reports' %}" class="text-gray-300 hover:text-white transition-colors">Analytics</a>
+                    </nav>
+
+                    <!-- Status Toggle -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-300">Status:</span>
+                        <button class="status-online px-3 py-1 rounded-full text-white text-sm font-medium flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-white rounded-full pulse-dot"></div>
+                            <span>Online</span>
+                        </button>
+                    </div>
+
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="relative p-2 text-gray-300 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+                        </button>
+                    </div>
+
+                    <!-- Provider Profile Dropdown -->
+                    <div class="relative">
+                        <button id="user-menu-button" class="flex items-center space-x-3 focus:outline-none">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold">{{ user.first_name|slice:":1"|upper }}{{ user.last_name|slice:":1"|upper }}</span>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p class="text-white font-medium">{{ user.first_name }} {{ user.last_name }}</p>
+                                <p class="text-gray-300 text-sm">{{ user.role|title }} Provider</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden">
+                            <div class="py-1">
+                                <a href="{% url 'manage_profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    Edit Profile
+                                </a>
+                                <a href="{% url 'logout_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">{{ center.center_name }}</h2>
+            <p class="text-gray-600">Manage your service center profile and settings</p>
+        </div>
+
+        <!-- Profile Information -->
+        <div class="bg-white rounded-xl border border-gray-200 p-8">
+            <h3 class="text-xl font-semibold text-gray-900 mb-6">Profile Information</h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Owner</label>
+                    <p class="text-gray-900">{{ center.user.username }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                    <p class="text-gray-900">{{ center.phone|default:"Not Provided" }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                    <p class="text-gray-900">{{ center.place_name|default:"Not Provided" }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Services Offered</label>
+                    <p class="text-gray-900">{{ center.services_offered|default:"No services listed." }}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                    <span class="badge
+                      {% if center.status == 'Approved' %}approved
+                      {% elif center.status == 'Suspended' %}suspended
+                      {% else %}pending{% endif %}">
+                      {{ center.status }}
+                    </span>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Average Rating</label>
+                    <p class="text-gray-900 flex items-center">
+                        ⭐ {{ center.rating_avg }}
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-8 flex space-x-4">
+                <a href="{% url 'manage_profile' %}" class="btn">Edit Profile</a>
+                <a href="{% url 'provider_dashboard' %}" class="btn">Back to Dashboard</a>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

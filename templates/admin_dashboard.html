@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - AutoConnect</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-gray-900 to-gray-700 text-white">
+
+    <!-- Navbar -->
+    <nav class="bg-black shadow-lg border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+            <span class="text-xl font-bold">🛡️ AutoConnect Admin</span>
+            <div class="flex items-center space-x-4">
+                <span class="text-gray-300">Hello, Admin {{ request.user.first_name }}</span>
+                <a href="{% url 'logout_view' %}" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg text-sm font-semibold">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Content -->
+    <div class="max-w-6xl mx-auto mt-10 p-6 bg-gray-800 rounded-2xl shadow-xl">
+        <h1 class="text-3xl font-bold mb-4">Admin Dashboard</h1>
+        <p class="text-gray-300 mb-6">
+            Manage service providers, monitor user activity, and maintain the platform.
+        </p>
+
+        <div class="grid md:grid-cols-3 gap-6">
+
+            <!-- Approve Providers -->
+            <a href="{% url 'pending_centers' %}" class="block bg-gray-900 p-6 rounded-xl shadow hover:shadow-2xl transition">
+                <h2 class="text-xl font-semibold mb-2">✅ Approve Providers</h2>
+                <p class="text-gray-400">View and approve pending service centers.</p>
+            </a>
+
+            <!-- Manage Users -->
+            <a href="{% url 'manage_users' %}" class="block bg-gray-900 p-6 rounded-xl shadow hover:shadow-2xl transition">
+                <h2 class="text-xl font-semibold mb-2">👥 Manage Users</h2>
+                <p class="text-gray-400">View and manage registered users.</p>
+            </a>
+
+            <!-- Analytics -->
+            <a href="#" class="block bg-gray-900 p-6 rounded-xl shadow hover:shadow-2xl transition">
+                <h2 class="text-xl font-semibold mb-2">📊 Analytics</h2>
+                <p class="text-gray-400">Track system activity and performance.</p>
+            </a>
+
+        </div>
+    </div>
+
+</body>
+</html>

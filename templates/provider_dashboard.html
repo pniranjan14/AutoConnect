@@ -1,0 +1,378 @@
+{% load mathfilters %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoConnect - Provider Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle provider menu dropdown
+            document.getElementById('provider-menu-button').addEventListener('click', function() {
+                const menu = document.getElementById('provider-menu');
+                menu.classList.toggle('hidden');
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                const button = document.getElementById('provider-menu-button');
+                const menu = document.getElementById('provider-menu');
+                if (!button.contains(event.target) && !menu.contains(event.target)) {
+                    menu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        }
+        
+        .service-card {
+            transition: all 0.3s ease;
+        }
+        
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+        }
+        
+        .pulse-dot {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .notification-badge {
+            animation: bounce 1s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% { transform: translateY(0); }
+            40%, 43% { transform: translateY(-8px); }
+            70% { transform: translateY(-4px); }
+        }
+        
+        .status-online {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        
+        .earnings-chart {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+    </style>
+</head>
+<body class="bg-white min-h-full">
+    <!-- Header -->
+    <header class="gradient-bg text-white shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <!-- Logo and Brand -->
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-500 p-2 rounded-lg">
+                        <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.22.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold">AutoConnect</h1>
+                        <p class="text-gray-300 text-sm">Provider Dashboard</p>
+                    </div>
+                </div>
+                
+                <!-- Navigation and User Menu -->
+                <div class="flex items-center space-x-6">
+                    <nav class="hidden md:flex space-x-6">
+                        <a href="{% url 'provider_dashboard' %}" class="text-white hover:text-blue-300 transition-colors">Dashboard</a>
+                        <a href="{% url 'new_requests' %}" class="text-gray-300 hover:text-white transition-colors">Bookings</a>
+                        <a href="{% url 'provider_emergency' %}" class="text-gray-300 hover:text-white transition-colors">Emergency</a>
+                        <a href="{% url 'services_provided' %}" class="text-gray-300 hover:text-white transition-colors">Services</a>
+                        <a href="{% url 'service_reports' %}" class="text-gray-300 hover:text-white transition-colors">Analytics</a>
+                    </nav>
+                    
+                    <!-- Status Toggle -->
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm text-gray-300">Status:</span>
+                        <button class="status-online px-3 py-1 rounded-full text-white text-sm font-medium flex items-center space-x-1">
+                            <div class="w-2 h-2 bg-white rounded-full pulse-dot"></div>
+                            <span>Online</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Notifications -->
+                    <div class="relative">
+                        <button class="relative p-2 text-gray-300 hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM4 19h10a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                            <span class="notification-badge absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Provider Profile Dropdown -->
+                    <div class="relative">
+                        <button id="provider-menu-button" class="flex items-center space-x-3 focus:outline-none">
+                            <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold">{{ center.center_name|slice:":2"|upper }}</span>
+                            </div>
+                            <div class="hidden md:block text-left">
+                                <p class="text-white font-medium">{{ center.center_name }}</p>
+                                <p class="text-gray-300 text-sm">Verified Provider</p>
+                            </div>
+                            <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown Menu -->
+                        <div id="provider-menu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50 hidden">
+                            <div class="py-1">
+                                <a href="{% url 'provider_profile' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    Edit Profile
+                                </a>
+                                <a href="{% url 'logout_view' %}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                                    </svg>
+                                    Logout
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Welcome Section -->
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome back, {{ center.center_name }}!</h2>
+            <p class="text-gray-600">Manage your bookings, services, and grow your business</p>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="stat-card p-6 rounded-xl border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Today's Bookings</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ todays_bookings }}</p>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card p-6 rounded-xl border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Monthly Revenue</p>
+                        <p class="text-2xl font-bold text-gray-900">₹{{ monthly_revenue_inr|floatformat:0 }}</p>
+                    </div>
+                    <div class="bg-green-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.67v-1.93c-1.71-.36-3.16-1.46-3.27-3.4h1.96c.1 1.05.82 1.87 2.65 1.87 1.96 0 2.4-.98 2.4-1.59 0-.83-.44-1.61-2.67-2.14-2.48-.6-4.18-1.62-4.18-3.67 0-1.72 1.39-2.84 3.11-3.21V4h2.67v1.95c1.86.45 2.79 1.86 2.85 3.39H14.3c-.05-1.11-.64-1.87-2.22-1.87-1.5 0-2.4.68-2.4 1.64 0 .84.65 1.39 2.67 1.91s4.18 1.39 4.18 3.91c-.01 1.83-1.38 2.83-3.12 3.16z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card p-6 rounded-xl border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Customer Rating</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ avg_rating }}</p>
+                    </div>
+                    <div class="bg-yellow-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card p-6 rounded-xl border border-gray-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium">Completed Jobs</p>
+                        <p class="text-2xl font-bold text-gray-900">{{ completed_bookings }}</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded-lg">
+                        <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mb-8">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <a href="{% url 'services_provided' %}" class="service-card bg-white p-6 rounded-xl border border-gray-200 text-left hover:border-green-300 block">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-green-100 p-3 rounded-lg">
+                            <svg class="w-8 h-8 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Add New Service</h4>
+                            <p class="text-gray-600 text-sm">Create and manage service offerings</p>
+                        </div>
+                    </div>
+                </a>
+                
+                <a href="{% url 'new_requests' %}" class="service-card bg-white p-6 rounded-xl border border-gray-200 text-left hover:border-blue-300 block">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-blue-100 p-3 rounded-lg">
+                            <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">Manage Bookings</h4>
+                            <p class="text-gray-600 text-sm">View and update appointment status</p>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="{% url 'service_reports' %}" class="service-card bg-white p-6 rounded-xl border border-gray-200 text-left hover:border-purple-300 block">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-purple-100 p-3 rounded-lg">
+                            <svg class="w-8 h-8 text-purple-600" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold text-gray-900">View Analytics</h4>
+                            <p class="text-gray-600 text-sm">Track performance and insights</p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Today's Schedule & Recent Bookings -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Today's Schedule -->
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Today's Schedule</h3>
+                <div class="space-y-4">
+                    {% for booking in todays_schedule %}
+                    <div class="flex items-center space-x-4 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                        <div class="bg-green-100 p-2 rounded-full">
+                            <div class="w-3 h-3 bg-green-500 rounded-full pulse-dot"></div>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium text-gray-900">{{ booking.service_type }} - {{ booking.user.first_name }}</p>
+                            <p class="text-sm text-gray-600">{{ booking.booking_time|date:"g:i A" }} • {{ booking.vehicle_model|default:"Vehicle" }}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-green-600 font-semibold">₹{{ booking.price_inr|floatformat:0 }}</span>
+                            <p class="text-xs text-gray-500">{{ booking.get_status_display }}</p>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500">No bookings scheduled for today.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Recent Customer Reviews -->
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Recent Reviews</h3>
+                <div class="space-y-4">
+                    {% for review in recent_reviews %}
+                    <div class="p-4 bg-gray-50 rounded-lg">
+                        <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center space-x-2">
+                                <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                                    <span class="text-white text-sm font-semibold">{{ review.user.first_name|slice:":2"|upper }}</span>
+                                </div>
+                                <span class="font-medium text-gray-900">{{ review.user.first_name }}</span>
+                            </div>
+                            <div class="flex text-yellow-400">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        ⭐
+                                    {% else %}
+                                        ☆
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-600">"{{ review.comment }}"</p>
+                        <p class="text-xs text-gray-500 mt-2">{{ review.review_date|timesince }} ago</p>
+                    </div>
+                    {% empty %}
+                    <p class="text-gray-500">No reviews yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Earnings Overview -->
+        <div class="mt-8">
+            <div class="bg-white rounded-xl border border-gray-200 p-6">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">Weekly Earnings Overview</h3>
+                <div class="earnings-chart p-6 rounded-lg text-white">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-blue-100">This Week</p>
+                            <p class="text-2xl font-bold">₹{{ total_weekly_inr|floatformat:0 }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-blue-100">Total Earnings</p>
+                            <p class="text-lg font-semibold text-green-300">Last 7 Days</p>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-7 gap-2 mt-4">
+                        {% for earning in weekly_earnings %}
+                        <div class="text-center">
+                            {% if max_earning > 0 %}
+                                {% widthratio earning 1 max_earning as height_ratio %}
+                                <div class="bg-white bg-opacity-{{ height_ratio|mul:100|floatformat:0 }} h-{{ height_ratio|mul:32|floatformat:0 }}px rounded mb-1" style="min-height: 8px;"></div>
+                            {% else %}
+                                <div class="bg-white bg-opacity-20 h-8 rounded mb-1"></div>
+                            {% endif %}
+                            <span class="text-xs">
+                                {% if forloop.counter0 == 0 %}Mon
+                                {% elif forloop.counter0 == 1 %}Tue
+                                {% elif forloop.counter0 == 2 %}Wed
+                                {% elif forloop.counter0 == 3 %}Thu
+                                {% elif forloop.counter0 == 4 %}Fri
+                                {% elif forloop.counter0 == 5 %}Sat
+                                {% elif forloop.counter0 == 6 %}Sun
+                                {% endif %}
+                            </span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98df7b8c65187f3a',t:'MTc2MDM2NTI3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
