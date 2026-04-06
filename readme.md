@@ -59,3 +59,12 @@ AutoConnect is a full-stack web application that automates vehicle service booki
 ```bash
 git clone https://github.com/your-username/autoconnect.git
 cd autoconnect
+
+
+## 👨‍💻 Created By
+
+**P Niranjan**
+
+- 🌐 [Portfolio](https://niranjan-portfolio-gold.vercel.app/)
+- 🐙 [GitHub](https://github.com/pniranjan14)
+- 💼 [LinkedIn](https://www.linkedin.com/in/pniranjannn/)
