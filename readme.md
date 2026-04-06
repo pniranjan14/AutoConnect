@@ -58,7 +58,8 @@ AutoConnect is a full-stack web application that automates vehicle service booki
 ### 1️⃣ Clone the Repository
 ```bash
 git clone https://github.com/your-username/autoconnect.git
-cd autoconnect
+cd autoconnect 
+```
 
 
 ## 👨‍💻 Created By
